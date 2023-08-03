@@ -1,2 +1,2 @@
 META:
-  - ['../data/alpaca_gpt4_data.json', 'text']
+  - ['/home/pgao/fga/alpaca.json', 'text']

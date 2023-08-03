@@ -469,7 +469,72 @@ class Transformer(PreTrainedModel):
         self.gradient_checkpointing = False
         # Initialize weights and apply final processing
         self.post_init()
+        self.image_words = 0
+        self.cache_image_words = 0 # for inference
+        if with_visual:
+            print("build llama model with clip")
+            torch.set_default_tensor_type(torch.cuda.HalfTensor)
+            self.clip, _, _ = open_clip.create_model_and_transforms('ViT-L-14', pretrained='openai')
+            torch.set_default_tensor_type(torch.FloatTensor)
+            for name, param in self.clip.named_parameters():
+                param.requires_grad = False
+            in_dim = self.clip.visual.proj.shape[1]
+            # in_dim = 3
+            self.clip_proj = nn.Linear(in_dim, config.dim)
+            self.clip_proj_norm = nn.LayerNorm(config.dim)
+            self.image_words = 257
 
+        self.set_default_trainability()
+
+
+    def get_trainable_params(self):
+        trainable = {}
+        for name, para in self.named_parameters():
+            if not name.startswith("clip."):
+                trainable[name] = para
+
+        return trainable
+
+
+    def set_default_trainability(self):
+        for key, value in self.named_parameters():
+            value.requires_grad = False
+            value.data = value.data.half()
+        for key, value in self.get_trainable_params().items():
+            value.data = value.data.float()
+            value.requires_grad = True
+
+
+    @torch.no_grad()
+    def clip_encode_image(self, x):
+        # modified from CLIP
+        x = self.clip.visual.conv1(x)  # shape = [*, width, grid, grid]
+        # shape = [*, width, grid ** 2]
+        x = x.reshape(x.shape[0], x.shape[1], -1)
+        x = x.permute(0, 2, 1)  # shape = [*, grid ** 2, width]
+        x = torch.cat([self.clip.visual.class_embedding.to(x.dtype) + torch.zeros(x.shape[0], 1,
+                      x.shape[-1], dtype=x.dtype, device=x.device), x], dim=1)  # shape = [*, grid ** 2 + 1, width]
+        x = x + self.clip.visual.positional_embedding.to(x.dtype)
+        x = self.clip.visual.ln_pre(x)
+
+        x = x.permute(1, 0, 2)  # NLD -> LND
+        x = self.clip.visual.transformer(x)
+        x = x.permute(1, 0, 2)  # LND -> NLD
+
+        # preserve all spatial tokens
+        x = self.clip.visual.ln_post(x[:, :, :])
+
+        if self.clip.visual.proj is not None:
+            x = x @ self.clip.visual.proj
+
+        return x
+
+
+    def encode_image(self, image):
+        # return self.patch_embed(image)
+        image_tokens = self.clip_encode_image(image)
+        image_tokens = self.clip_proj_norm(self.clip_proj(image_tokens))
+        return image_tokens
     def get_input_embeddings(self):
         return self.embed_tokens
 

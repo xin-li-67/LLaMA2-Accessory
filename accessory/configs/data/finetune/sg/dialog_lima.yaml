@@ -1,2 +1,2 @@
 META:
-  - ['../data/lima_vicuna_format.json', 'text']
+  - ['/home/pgao/fga/alpaca.json', 'text']
