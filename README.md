@@ -27,13 +27,28 @@
   - 👁‍🗨 Visual Encoders: [CLIP](https://github.com/openai/CLIP), [Q-Former](https://github.com/salesforce/LAVIS) and [ImageBind](https://github.com/facebookresearch/ImageBind).
   - 🧩 LLMs: LLaMA and LLaMA2.
 
-## Setup
+## Getting Started
 
-For environment installation, refer to [docs/install.md](./docs/install.md).
+* **Install the dependencies:** Follow [docs/install.md](docs/install.md).
+* **Obtain the LLaMA pre-trained weights:** Due to potential licensing issues we currently do not redistribute the LLaMA pre-trained weights and release all fine-tuned weights in the form of **difference from the original weights**. As a result you will need to obtain the original LLaMA pre-trained weights from Meta by yourself ([LLaMA 1](https://forms.gle/jk851eBVbX1m5TAv5) and [LLaMA 2](https://ai.meta.com/resources/models-and-libraries/llama-downloads/)). An example of a downloaded model is as follows:
+```
+llama-2-13b
+├── checklist.chk
+├── consolidated.00.pth
+├── consolidated.01.pth
+└── params.json
+```
+* **Check the demos:** For each function of this repo we put a demo in the [Demos](#demos) section. Each demo comes with
+  * some example inputs and outputs
+  * instructions to run the model inference with your own inputs
+  * instructions to train the model
+  
+  Refer to the links after each example for further instructions about the specific models.
+  
 
-## Model Usage
+## Advanced Usage
 
-Instructions for model training, inference, and fine-tuning can be found in [docs/pretrain.md](./docs/pretrain.md), [docs/inference.md](./docs/inference.md), and [docs/finetune.md](./docs/finetune.md), respectively.
+In the future, we plan to provide additional comprehensive documentations covering the details of the code design and advanced topics (e.g., customizing datasets and models, performance tuning guide). You can also [file an issue](https://github.com/Alpha-VLLM/LLaMA2-Accessory/issues) if you have any questions about the code.
 
 ## Demos
 * Instruction-tuned LLaMA2: [alpaca](https://alpha-vllm.github.io/demo_presentation/examples/finetune/sg/alpaca.html) & [gorilla](https://alpha-vllm.github.io/demo_presentation/examples/finetune/sg/gorilla.html).
