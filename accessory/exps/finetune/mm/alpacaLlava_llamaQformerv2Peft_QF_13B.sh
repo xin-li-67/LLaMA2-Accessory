@@ -9,7 +9,7 @@ data_config=configs/data/finetune/mm/alpaca_llava.yaml
 data_parallel=sdp
 model_parallel=1
 
-exp_name=finetune/mm/alpacaLlava_llamaQformerv2Peft_QF_13B_lr1e-4_fixlora
+exp_name=finetune/mm/alpacaLlava_llamaQformerv2Peft_QF_13B
 echo "exp name: $exp_name"
 mkdir -p output/"$exp_name"
 
