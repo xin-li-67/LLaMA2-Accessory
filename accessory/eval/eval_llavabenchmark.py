@@ -23,8 +23,6 @@ import json
 from tqdm import tqdm
 import shortuuid
 
-
-#from accessory.LLaVA.llava.constants import IMAGE_TOKEN_INDEX, DEFAULT_IMAGE_TOKEN, DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN
 from LLaVA.llava.constants import IMAGE_TOKEN_INDEX, DEFAULT_IMAGE_TOKEN, DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN
 from LLaVA.llava.conversation import conv_templates, SeparatorStyle
 from LLaVA.llava.model.builder import load_pretrained_model
